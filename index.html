@@ -3,11 +3,29 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="stylesheet" href="./src/app.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Vite + Svelte</title>
   </head>
   <body>
     <div id="app"></div>
-    <script type="module" src="/src/main.js"></script>
+    <script type="module">
+        import VisualController from './src/main.js'
+        import App from './src/App.svelte'
+
+        const visualController = new VisualController ();
+        
+        visualController.publish ( App, {}, 'app' )
+              .then ( app => {
+                      // app contains a svelte component update methods defined 
+                      // in the App.svelte by calling the 
+                      // 'setupUpdates' function
+                      // We have defined update method 'changeMessage'
+                      app.changeMessage ( 'Visual-Controller for Svelte 5' )
+                  })  
+
+        // Destroy the app:
+        // visualController.destroy ( 'app' )
+    </script>
   </body>
 </html>

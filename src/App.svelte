@@ -2,6 +2,17 @@
   import svelteLogo from './assets/svelte.svg'
   import viteLogo from '/vite.svg'
   import Counter from './lib/Counter.svelte'
+
+  let message = 'Svelte app powered by Vite!'
+
+  export let setupUpdates; // setupUpdates is a function.
+
+  // Provide an object with all update methods for the app
+  setupUpdates ({
+        changeMessage ( msg ) {
+                message = msg
+            }
+    })
 </script>
 
 <main>
@@ -19,9 +30,7 @@
     <Counter />
   </div>
 
-  <p>
-    Check out <a href="https://github.com/sveltejs/kit#readme" target="_blank" rel="noreferrer">SvelteKit</a>, the official Svelte app framework powered by Vite!
-  </p>
+  <p> {message}</p>
 
   <p class="read-the-docs">
     Click on the Vite and Svelte logos to learn more

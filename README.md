@@ -1,47 +1,165 @@
-# Svelte + Vite
+# Visual Controller for Svelte 5 (@peter.naydenov/visual-controller-svelte5)
 
-This template should help get you started developing with Svelte in Vite.
+![version](https://img.shields.io/github/package-json/v/peterNaydenov/visual-controller-for-svelte5)
+![license](https://img.shields.io/github/license/peterNaydenov/visual-controller-for-svelte5)
 
-## Recommended IDE Setup
 
-[VS Code](https://code.visualstudio.com/) + [Svelte](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode).
 
-## Need an official Svelte framework?
+Tool for building a micro-frontends(MFE) based on Svelte 5 components - Start multiple Svelte 5 applications in the same HTML page and control them.
 
-Check out [SvelteKit](https://github.com/sveltejs/kit#readme), which is also powered by Vite. Deploy anywhere with its serverless-first approach and adapt to various platforms, with out of the box support for TypeScript, SCSS, and Less, and easily-added support for mdsvex, GraphQL, PostCSS, Tailwind CSS, and more.
+Install visual controller:
+```
+npm i @peter.naydenov/visual-controller-for-svelte5
+```
 
-## Technical considerations
+Initialization process:
+```js
+// for es6 module projects:
+import notice from '@peter.naydenov/notice' // event emitter by your personal choice.
+import VisualController from '@peter.naydenov/visual-controller-for-svelte5'
 
-**Why use this over SvelteKit?**
 
-- It brings its own routing solution which might not be preferable for some users.
-- It is first and foremost a framework that just happens to use Vite under the hood, not a Vite app.
+let 
+      eBus = notice ()
+    , dependencies = { eBus }  // Provide everything that should be exposed to components 
+    , html = new VisualController ( dependencies ) 
+    ;
+// Ready for use...
+```
 
-This template contains as little as possible to get started with Vite + Svelte, while taking into account the developer experience with regards to HMR and intellisense. It demonstrates capabilities on par with the other `create-vite` templates and is a good starting point for beginners dipping their toes into a Vite + Svelte project.
+Let's show something on the screen:
+```js
+// Let's have svelte 5 component 'Hello' with prop 'greeting'
 
-Should you later need the extended capabilities and extensibility provided by SvelteKit, the template has been structured similarly to SvelteKit so that it is easy to migrate.
+html.publish ( Hello, {greeting:'Hi'}, 'app' )
+//arguments are: ( component, props, containerID )
+```
 
-**Why `global.d.ts` instead of `compilerOptions.types` inside `jsconfig.json` or `tsconfig.json`?**
+## Inside of the Components
 
-Setting `compilerOptions.types` shuts out all other types not explicitly listed in the configuration. Using triple-slash references keeps the default TypeScript setting of accepting type information from the entire workspace, while also adding `svelte` and `vite/client` type information.
+*Note: If your component should be displayed only, that section can be skipped.*
 
-**Why include `.vscode/extensions.json`?**
-
-Other templates indirectly recommend extensions via the README, but this file allows VS Code to prompt the user to install the recommended extension upon opening the project.
-
-**Why enable `checkJs` in the JS template?**
-
-It is likely that most cases of changing variable types in runtime are likely to be accidental, rather than deliberate. This provides advanced typechecking out of the box. Should you like to take advantage of the dynamically-typed nature of JavaScript, it is trivial to change the configuration.
-
-**Why is HMR not preserving my local component state?**
-
-HMR state preservation comes with a number of gotchas! It has been disabled by default in both `svelte-hmr` and `@sveltejs/vite-plugin-svelte` due to its often surprising behavior. You can read the details [here](https://github.com/sveltejs/svelte-hmr/tree/master/packages/svelte-hmr#preservation-of-local-state).
-
-If you have state that's important to retain within a component, consider creating an external store which would not be replaced by HMR.
+All provided libraries during visualController initialization are available if you export variable with name `dependencies`. Export also `setupUpdates` if you need to manipulate component from outside.
 
 ```js
-// store.js
-// An extremely simple external store
-import { writable } from 'svelte/store'
-export default writable(0)
+
+let msg = 'Vite + Svelte'
+export let dependencies, setupUpdates;
+const { eBus } = dependencies
+
+setupUpdates ({   // Provides to visualContoller method 'changeMessage' 
+          changeMessage (update) {
+                  msg = update
+              }
+    })
 ```
+
+The external call will look like this:
+
+```js
+html.getApp ( 'app' ).changeMessage ( 'New message content' )
+```
+
+
+
+
+## Visual Controller Methods
+```js
+  publish : 'Render svelte app in container. Associate app instance with the container.'
+, getApp  : 'Returns app instance by container name'
+, destroy : 'Destroy app by using container name '
+, has     : 'Checks if app with specific "id" was published'
+```
+
+
+
+### VisualController.publish ()
+Publish a svelte 5 app.
+```js
+html.publish ( component, props, containerID )
+```
+- **component**: *object*. Svelte 5 component
+- **props**: *object*. Svelte components props
+- **containerID**: *string*. Id of the container where svelte-app will live.
+- **returns**: *Promise<Object>*. Update methods library if defined. Else will return a empty object;
+
+Example:
+```js
+ let html = new VisualController ();
+ html.publish ( Hi, { greeting: 'hi'}, 'app' )
+```
+
+Render component 'Hi' with prop 'greeting' and render it in html element with id "app".
+
+
+
+
+
+### VisualController.getApp ()
+Returns the library of functions provided from method `setupUpdates`. If svelte-app never called `setupUpdates`, result will be an empty object.
+
+```js
+ let controls = html.getApp ( containerID )
+```
+- **containerID**: *string*. Id of the container.
+
+Example:
+```js
+let 
+      id = 'videoControls'
+    , controls = html.getApp ( id )
+    ;
+    // if app with 'id' doesn't exist -> returns false, 
+    // if app exists and 'setupUpdates' was not used -> returns {}
+    // in our case -> returns { changeMessage:f }
+if ( !controls )   console.error ( `App for id:"${id}" is not available` )
+else {
+        if ( controls.changeMessage )   controls.changeMessage ('new title') 
+   }
+```
+If visual controller(html) has a svelte app associated with this name will return it. Otherwise will return **false**.
+
+
+
+
+
+### VisualController.destroy ()
+Will destroy svelte app associated with this container name and container will become empty. Function will return 'true' on success and 'false' on failure. 
+Function will not delete content of provided container if there is no svelte app associated with it.
+
+```js
+html.destroy ( containerID )
+```
+- **containerID**: *string*. Id name.
+
+
+
+
+
+### Extra
+
+Visual Controller has versions for few other front-end frameworks:
+- [Svelte 4](https://github.com/PeterNaydenov/visual-controller-for-svelte3)
+- [React](https://github.com/PeterNaydenov/visual-controller-for-react) 
+- [Vue 3](https://github.com/PeterNaydenov/visual-controller-for-vue3)
+- [Vue 2](https://github.com/PeterNaydenov/visual-controller-for-vue)
+
+
+
+
+
+## Links
+
+- [History of changes](https://github.com/PeterNaydenov/visual-controller-for-svelte5/blob/master/Changelog.md)
+- [License](https://github.com/PeterNaydenov/visual-controller-for-svelte5/blob/master/LICENSE)
+
+
+
+## Credits
+'visual-controller-for-svelte5' is created and supported by Peter Naydenov
+
+
+
+## License
+
+'visual-controller-for-svelte5' is released under the [MIT license](https://github.com/PeterNaydenov/visual-controller-for-svelte5/blob/master/LICENSE)
