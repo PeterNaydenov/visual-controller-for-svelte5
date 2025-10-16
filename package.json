@@ -12,7 +12,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-        "ask-for-promise": "^3.0.1"
+        "ask-for-promise": "^3.0.2"
       },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^6.2.1",
