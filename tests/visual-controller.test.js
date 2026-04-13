@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import VisualController from '../src/main.js';
 import * as svelte from 'svelte';
-import App from '../src/App.svelte';
+import App from '../demo/App.svelte';
 
 vi.mock('svelte', () => ({
   mount: vi.fn(() => ({})),
