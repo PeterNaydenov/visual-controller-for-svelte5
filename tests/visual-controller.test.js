@@ -70,4 +70,28 @@ describe ( 'VisualController for Svelte 5', () => {
     expect(typeof updates).toBe('object');
   });
 
+
+  it ( 'Fails when Component is undefined', async () => {
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const vc = new VisualController();
+
+    const result = await vc.publish(undefined, {}, containerId);
+
+    expect(consoleSpy).toHaveBeenCalledWith('Error: Component is undefined');
+    expect(result).toBe(false);
+    expect(svelte.mount).not.toHaveBeenCalled();
+  });
+
+
+  it ( 'Fails when container does not exist', async () => {
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const vc = new VisualController();
+
+    const result = await vc.publish(App, {}, 'non-existent-container');
+
+    expect(consoleSpy).toHaveBeenCalledWith('Can\'t find node with id: "non-existent-container"');
+    expect(result).toBe(false);
+    expect(svelte.mount).not.toHaveBeenCalled();
+  });
+
 }) // describe
