@@ -35,6 +35,19 @@ describe ( 'VisualController for Svelte 5', () => {
   });
 
 
+  it ( 'Replaces existing component without calling destroy', async () => {
+    const vc = new VisualController();
+
+    await vc.publish(App, {}, containerId);
+    svelte.mount.mockClear();
+
+    await vc.publish(App, {}, containerId);
+
+    expect(svelte.unmount).toHaveBeenCalled();
+    expect(svelte.mount).toHaveBeenCalledTimes(1);
+  });
+
+
   it ( 'Destroy a published app', async () => {
     const vc = new VisualController();
     await vc.publish(App, {}, containerId);
@@ -61,6 +74,16 @@ describe ( 'VisualController for Svelte 5', () => {
   });
 
 
+  it ( 'Fail to destroy non-existent app', () => {
+    const vc = new VisualController();
+
+    const result = vc.destroy('non-existent-app');
+
+    expect(result).toBe(false);
+    expect(svelte.unmount).not.toHaveBeenCalled();
+  });
+
+
   it ( 'Updates a published app', async () => {
     const vc = new VisualController();
     await vc.publish(App, {}, containerId);
@@ -68,6 +91,17 @@ describe ( 'VisualController for Svelte 5', () => {
     const updates = vc.getApp(containerId);
     expect(updates).toBeDefined();
     expect(typeof updates).toBe('object');
+  });
+
+
+  it ( 'Fail to get non-existent app', () => {
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const vc = new VisualController();
+
+    const result = vc.getApp('non-existent-app');
+
+    expect(consoleSpy).toHaveBeenCalledWith('App with id: "non-existent-app" was not found');
+    expect(result).toBe(false);
   });
 
 
