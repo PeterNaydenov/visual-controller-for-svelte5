@@ -1,61 +1,73 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import VisualController from '../src/main.js';
 import * as svelte from 'svelte';
+import App from '../src/App.svelte';
 
-// Mock svelte's mount and unmount
 vi.mock('svelte', () => ({
-  mount: vi.fn(() => ({})), // Return a simple object representing the app
+  mount: vi.fn(() => ({})),
   unmount: vi.fn(),
 }));
 
-describe('VisualController', () => {
-  let html;
+describe ( 'VisualController for Svelte 5', () => {
+
   let containerId = 'test-container';
 
   beforeEach(() => {
-    // Reset DOM and mocks
     document.body.innerHTML = `<div id="${containerId}"></div>`;
     vi.clearAllMocks();
-    html = new VisualController({});
   });
 
-  it('should publish a component to a container', async () => {
-    const MockComponent = {}; 
-    const promise = html.publish(MockComponent, { foo: 'bar' }, containerId);
+  it ( 'Publish a component to a container', async () => {
+    const vc = new VisualController();
+    const promise = vc.publish(App, { message: 'test message' }, containerId);
     const updates = await promise;
 
     expect(svelte.mount).toHaveBeenCalled();
-    expect(html.has(containerId)).toBe(true);
+    expect(svelte.mount).toHaveBeenCalledWith(App, expect.objectContaining({
+      target: document.getElementById(containerId),
+      props: expect.objectContaining({
+        message: 'test message',
+        setupUpdates: expect.any(Function),
+      }),
+    }));
+    expect(updates).toBeDefined();
     expect(typeof updates).toBe('object');
   });
 
-  it('should destroy a published app', async () => {
-    const MockComponent = {};
-    const promise = html.publish(MockComponent, {}, containerId);
-    await promise;
 
-    const destroyed = html.destroy(containerId);
+  it ( 'Destroy a published app', async () => {
+    const vc = new VisualController();
+    await vc.publish(App, {}, containerId);
+
+    const destroyed = vc.destroy(containerId);
     expect(destroyed).toBe(true);
     expect(svelte.unmount).toHaveBeenCalled();
-    expect(html.has(containerId)).toBe(false);
+    expect(vc.has(containerId)).toBe(false);
   });
 
-  it('should return false when destroying a non-existent app', () => {
-    const destroyed = html.destroy('non-existent');
-    expect(destroyed).toBe(false);
+
+  it ( 'Test for existing app', () => {
+    const vc = new VisualController();
+    vc.publish(App, {}, containerId);
+
+    expect(vc.has(containerId)).toBe(true);
   });
 
-  it('should get updates from a published app', async () => {
-    const MockComponent = {};
-    const promise = html.publish(MockComponent, {}, containerId);
-    await promise;
 
-    const controls = html.getApp(containerId);
-    expect(controls).toBeDefined();
+  it ( 'Test for non-existent app', () => {
+    const vc = new VisualController();
+
+    expect(vc.has('non-existent')).toBe(false);
   });
 
-  it('should return false when getting a non-existent app', () => {
-    const controls = html.getApp('non-existent');
-    expect(controls).toBe(false);
+
+  it ( 'Updates a published app', async () => {
+    const vc = new VisualController();
+    await vc.publish(App, {}, containerId);
+
+    const updates = vc.getApp(containerId);
+    expect(updates).toBeDefined();
+    expect(typeof updates).toBe('object');
   });
-});
+
+}) // describe
