@@ -8,22 +8,12 @@ import { mount, unmount } from 'svelte'
  */
 
 
-class VisualController {
-
-  constructor ( dependencies ) {
-        const cache = {} // collect svelte components
-        return {
-            publish : this.publish ( dependencies, cache ),
-            destroy : this.destroy ( cache ),
-            getApp  : this.getApp ( cache ),
-            has     : id => cache.hasOwnProperty ( id )
-          }
-    } // constructor
-
-
-    
-  publish ( dependencies, cache ) {
-      return function ( Component, data, id ) {
+function VisualController ( dependencies={} ) {
+  
+  const cache = {} // collect svelte components
+  
+  
+  function publish ( Component, data, id ) {
                 const 
                       hasKey = cache.hasOwnProperty ( id )
                     , endTask = askForPromise ()
@@ -35,7 +25,7 @@ class VisualController {
                           return endTask.promise
                     }
 
-                if ( hasKey )   unmount (cache[ id ])
+                if ( hasKey )   unmount ( cache[ id ] )
                 
                 let
                      node = document.getElementById ( id )
@@ -56,12 +46,11 @@ class VisualController {
                 cache[ id ][ 'updates'] = updates ? updates : {}
                 endTask.done ( cache[id]['updates'] )
                 return endTask.promise
-        }} // publish func.
+      } // publish func.
 
 
 
-  destroy ( cache ) {
-      return function destroy ( id ) {
+  function destroy ( id ) {
                 if ( cache[id] ) {
                           let item = cache[id];
                           unmount ( item )
@@ -69,21 +58,34 @@ class VisualController {
                           return true
                      }
                 else      return false
-        }} // destroy func.
+        } // destroy func.
 
 
 
-  getApp ( cache ) {
-    return function ( id ) {
+  function getApp ( id ) {
             const item = cache[id];
             if (!item ) {
                     console.error ( `App with id: "${id}" was not found` )
                     return false
                 }
             return item['updates']
-    }} // getApp func.
+    } // getApp func.
 
-} // VisualController
+
+  
+  function has ( id ) {
+        return cache.hasOwnProperty ( id )
+    } // has func.
+
+  
+  return {
+            publish,
+            destroy,
+            getApp,
+            has
+          }
+
+} // VisualController func.
 
 
 export default VisualController
