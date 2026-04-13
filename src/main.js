@@ -3,16 +3,42 @@ import askForPromise from "ask-for-promise"
 import { mount, unmount } from 'svelte'
 
 /**
- *  Visual Controller for Svelte 5
- *  Controls multiple svelte 5 apps with a single controller
+ * @typedef {Object} VisualControllerAPI
+ * @property {Function} publish - Publish a svelte component to an html element
+ * @property {Function} destroy - Destroy a published component
+ * @property {Function} getApp - Get update methods from a published component
+ * @property {Function} has - Check if component was published
  */
 
+/**
+ * @typedef {Object} UpdateMethods
+ * Update methods exposed by a published component via setupUpdates
+ * @property {Function} [changeMessage] - Example update method
+ */
 
+/**
+ * Visual Controller for Svelte 5
+ * Controls multiple svelte 5 apps with a single controller
+ *
+ * @param {Object} [dependencies={}] - External dependencies exposed to components
+ * @returns {VisualControllerAPI} - Controller instance with publish, destroy, getApp, has methods
+ */
 function VisualController ( dependencies={} ) {
   
-  const cache = {} // collect svelte components
-  
-  
+  /** @type {Object.<string, import('svelte').SvelteComponent>} */
+  const cache = {}
+
+
+
+  /**
+   * Publish a svelte component to an html element
+   * If component with given id exists, it will be replaced
+   *
+   * @param {import('svelte').SvelteComponent} Component - Svelte component to publish
+   * @param {Object} [data={}] - Props to pass to the component
+   * @param {string} id - Target container id
+   * @returns {Promise<UpdateMethods>} - Update methods from the component
+   */
   function publish ( Component, data, id ) {
                 const 
                       hasKey = cache.hasOwnProperty ( id )
@@ -50,6 +76,12 @@ function VisualController ( dependencies={} ) {
 
 
 
+  /**
+   * Destroy a published component
+   *
+   * @param {string} id - Container id
+   * @returns {boolean} - True if component was found and destroyed
+   */
   function destroy ( id ) {
                 if ( cache[id] ) {
                           let item = cache[id];
@@ -62,6 +94,12 @@ function VisualController ( dependencies={} ) {
 
 
 
+  /**
+   * Get update methods from a published component
+   *
+   * @param {string} id - Container id
+   * @returns {UpdateMethods|false} - Update methods or false if not found
+   */
   function getApp ( id ) {
             const item = cache[id];
             if (!item ) {
@@ -72,11 +110,17 @@ function VisualController ( dependencies={} ) {
     } // getApp func.
 
 
-  
+
+  /**
+   * Check if a component was published
+   *
+   * @param {string} id - Container id
+   * @returns {boolean} - True if component exists
+   */
   function has ( id ) {
         return cache.hasOwnProperty ( id )
     } // has func.
-
+  
   
   return {
             publish,
@@ -89,5 +133,3 @@ function VisualController ( dependencies={} ) {
 
 
 export default VisualController
-
-
