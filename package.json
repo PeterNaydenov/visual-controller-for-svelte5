@@ -5,12 +5,24 @@
   "license": "MIT",
   "author": "Peter Naydenov",
   "main": "src/main.js",
+  "types": "dist/main.d.ts",
+  "module": "src/main.js",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/main.d.ts",
+      "import": "./src/main.js",
+      "require": "./dist/visualController-svelte-5.cjs"
+    }
+  },
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build && npm run types",
     "types": "tsc -p tsconfig.types.json",
-    "preview": "vite preview",
     "cover": "vitest run --coverage",
     "test": "vitest run"
   },
