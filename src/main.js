@@ -132,4 +132,7 @@ function VisualController ( dependencies={} ) {
 } // VisualController func.
 
 
+
 export default VisualController
+
+
