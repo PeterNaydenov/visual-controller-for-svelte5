@@ -32,14 +32,14 @@
   "devDependencies": {
     "@playwright/test": "^1.59.1",
     "@sveltejs/vite-plugin-svelte": "^7.0.0",
-    "@vitest/browser": "^4.1.4",
-    "@vitest/coverage-v8": "^4.1.4",
-    "@vitest/ui": "^4.1.4",
+    "@vitest/browser": "^4.1.5",
+    "@vitest/coverage-v8": "^4.1.5",
+    "@vitest/ui": "^4.1.5",
     "jsdom": "^29.0.2",
     "playwright": "^1.59.1",
     "svelte": "^5.55.3",
     "typescript": "^6.0.2",
     "vite": "^8.0.8",
-    "vitest": "^4.1.4"
+    "vitest": "^4.1.5"
   }
 }
