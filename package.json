@@ -35,7 +35,7 @@
     "@vitest/browser": "^4.1.5",
     "@vitest/coverage-v8": "^4.1.5",
     "@vitest/ui": "^4.1.5",
-    "jsdom": "^29.1.0",
+    "jsdom": "^29.1.1",
     "playwright": "^1.59.1",
     "svelte": "^5.55.5",
     "typescript": "^6.0.3",
