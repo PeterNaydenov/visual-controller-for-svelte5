@@ -30,13 +30,13 @@
     "ask-for-promise": "^3.1.0"
   },
   "devDependencies": {
-    "@playwright/test": "^1.60.0",
+    "@playwright/test": "^1.61.0",
     "@sveltejs/vite-plugin-svelte": "^7.1.2",
     "@vitest/browser": "^4.1.8",
     "@vitest/coverage-v8": "^4.1.8",
     "@vitest/ui": "^4.1.8",
     "jsdom": "^29.1.1",
-    "playwright": "^1.60.0",
+    "playwright": "^1.61.0",
     "svelte": "^5.56.3",
     "typescript": "^6.0.3",
     "vite": "^8.0.16",
