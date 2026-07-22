@@ -7,15 +7,18 @@ function r(r = {}) {
 		let c = i.hasOwnProperty(s), l = e();
 		if (!a) return console.error("Error: Component is undefined"), l.done(!1), l.promise;
 		c && n(i[s]);
-		let u = document.getElementById(s), d = !1;
-		return u ? (u.innerHTML.trim() !== "" && (u.innerHTML = ""), i[s] = t(a, {
+		let u = document.getElementById(s), d = !1, f = (e) => d = e;
+		if (!u) return console.error(`Can't find node with id: "${s}"`), l.done(!1), l.promise;
+		u.innerHTML.trim() !== "" && (u.innerHTML = "");
+		let p = t(a, {
 			target: u,
 			props: {
 				dependencies: r,
-				setupUpdates: (e) => d = e,
+				setupUpdates: f,
 				...o
 			}
-		}), i[s].updates = d || {}, l.done(i[s].updates), l.promise) : (console.error(`Can't find node with id: "${s}"`), l.done(!1), l.promise);
+		});
+		return i[s] = p, i[s].updates = d || {}, l.done(i[s].updates), l.promise;
 	}
 	function o(e) {
 		if (i[e]) {
