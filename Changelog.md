@@ -2,6 +2,12 @@
 
 
 
+## 1.1.1 (2026-07-22)
+- [x] Dependency update. 'ask-for-promise' from 3.2.0;
+- [x] Dev dependency update. Typescript v.7.0.2;
+
+
+
 ## 1.1.0 (2026-04-14)
 - [x] Convert from 'class' to 'functional' approach;
 - [x] Adding 'jsdoc' description to the library;
