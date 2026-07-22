@@ -1,4 +1,3 @@
-export default VisualController;
 export type VisualControllerAPI = {
     /**
      * - Publish a svelte component to an html element
@@ -17,9 +16,6 @@ export type VisualControllerAPI = {
      */
     has: Function;
 };
-/**
- * Update methods exposed by a published component via setupUpdates
- */
 export type UpdateMethods = {
     /**
      * - Example update method
@@ -46,3 +42,4 @@ export type UpdateMethods = {
  * @returns {VisualControllerAPI} - Controller instance with publish, destroy, getApp, has methods
  */
 declare function VisualController(dependencies?: any): VisualControllerAPI;
+export default VisualController;
