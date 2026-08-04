@@ -1,7 +1,7 @@
 {
   "name": "@peter.naydenov/visual-controller-for-svelte5",
   "description": "Use it when a single javascript application should control multiple Svelte 5 apps.",
-  "version": "4.0.0",
+  "version": "3.0.0",
   "license": "MIT",
   "author": "Peter Naydenov",
   "main": "./src/main.js",
