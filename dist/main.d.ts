@@ -1,45 +1,44 @@
-export type VisualControllerAPI = {
-    /**
-     * - Publish a svelte component to an html element
-     */
-    publish: Function;
-    /**
-     * - Destroy a published component
-     */
-    destroy: Function;
-    /**
-     * - Get update methods from a published component
-     */
-    getApp: Function;
-    /**
-     * - Check if component was published
-     */
-    has: Function;
-};
-export type UpdateMethods = {
-    /**
-     * - Example update method
-     */
-    changeMessage?: Function;
+export type SetCallback = (markers: {
+    start: Text;
+    end: Text;
+}) => string | void;
+export type SetupUpdates = Object;
+export type VisualControllerInstance = {
+    set: SetCallback & ((fn: SetCallback, ...args: any[]) => void);
+    publish: (alias: string, component: any, data?: object, extraParams?: object) => Promise<SetupUpdates | false>;
+    destroy: (target?: string | string[]) => boolean | number;
+    has: (alias: string) => boolean;
+    getApp: (alias: string) => SetupUpdates | false;
+    isEmpty: (alias: string) => boolean | undefined;
+    list: () => string[];
+    reset: () => void;
 };
 /**
- * @typedef {Object} VisualControllerAPI
- * @property {Function} publish - Publish a svelte component to an html element
- * @property {Function} destroy - Destroy a published component
- * @property {Function} getApp - Get update methods from a published component
- * @property {Function} has - Check if component was published
+ *  Callback that places dim markers into the DOM.
+ *  @callback SetCallback
+ *  @param {{ start: Text, end: Text }} markers
+ *  @returns {string | void}
  */
 /**
- * @typedef {Object} UpdateMethods
- * Update methods exposed by a published component via setupUpdates
- * @property {Function} [changeMessage] - Example update method
+ *  Object passed to `setupUpdates` from inside a published component.
+ *  @typedef {Object} SetupUpdates
  */
 /**
- * Visual Controller for Svelte 5
- * Controls multiple svelte 5 apps with a single controller
- *
- * @param {Object} [dependencies={}] - External dependencies exposed to components
- * @returns {VisualControllerAPI} - Controller instance with publish, destroy, getApp, has methods
+ *  Controller instance returned by `VisualController`.
+ *  @typedef {Object} VisualControllerInstance
+ *  @property {SetCallback & ((fn: SetCallback, ...args: any[]) => void)} set
+ *  @property {(alias: string, component: any, data?: object, extraParams?: object) => Promise<SetupUpdates | false>} publish
+ *  @property {(target?: string | string[]) => boolean | number} destroy
+ *  @property {(alias: string) => boolean} has
+ *  @property {(alias: string) => SetupUpdates | false} getApp
+ *  @property {(alias: string) => boolean | undefined} isEmpty
+ *  @property {() => string[]} list
+ *  @property {() => void} reset
  */
-declare function VisualController(dependencies?: any): VisualControllerAPI;
+/**
+ *  Visual Controller for Svelte 5
+ *  @param {Object} [dependencies={}]
+ *  @returns {VisualControllerInstance}
+ */
+declare function VisualController(dependencies?: any): VisualControllerInstance;
 export default VisualController;
